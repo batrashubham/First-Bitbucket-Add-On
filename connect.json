@@ -1,0 +1,24 @@
+{
+  "key": "bitbuck-add-on",
+  "name": "My First Bitbuck Add On",
+  "description": "Word cloud of file types",
+  "baseUrl": "https://batrashubham.com/bitbuck",
+  "modules": {
+  	"oauthConsumer": {
+  		"clientId": "vVVfVvZekHjgSpDdXq"
+  	},
+    "repoPages": [{
+      "key": "cloud",
+      "name": {
+        "value": "File types"
+      },
+      "url": "/cloud.html?repo_uuid={repo_uuid}",
+      "location": "org.bitbucket.repository.navigation",
+      "params": {
+        "auiIcon": "aui-iconfont-pages"
+      }
+    }]
+  },
+  "scopes": ["repository"],
+  "contexts": ["personal"]
+}

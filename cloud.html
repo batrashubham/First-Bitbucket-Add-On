@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://bitbucket.org/atlassian-connect/all.js"></script>
+    <style>
+      span {
+        padding: 0 10px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <p></p>
+
+    <script>
+      var repoUuid = location.search.match(/[\?&]repo_uuid=([^\&]*)/)[1];
+      repoUuid = decodeURIComponent(repoUuid);
+
+      var p = document.querySelector('p');
+
+      AP.require('request', function(request) {
+
+        function walkSourceTree(path) {
+          request({
+            url: '/1.0/repositories/{}/' + repoUuid + '/src/HEAD' + path,
+            success: function (data) {
+              console.log(data);
+              if (data.files) {
+                data.files.forEach(function(file) {
+                  var filename = file.path.substring(file.path.lastIndexOf('/') + 1);
+                  var ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+                  var span = p.querySelector('#' + ext);
+                  if (!span) {
+                    span = document.createElement('span');                    
+                    span.textContent = span.id = ext;
+                    span.style.fontSize = '20px';
+                    function rndHex() {
+                      return Math.floor(Math.random() * 256).toString(16);
+                    }
+                    span.style.color = '#' + rndHex() + rndHex() + rndHex();
+                    span.style.transform = 'rotate(' + (-15 + Math.random() * 30) + 'deg)';
+                    p.appendChild(span);                    
+                  } else {
+                    span.style.fontSize = Math.min(200, parseInt(span.style.fontSize) + 1) + 'px';
+                  }
+                });
+              }
+
+              if (data.directories) {
+                data.directories.forEach(function(dir) {
+                  walkSourceTree(path + dir + '/');
+                });
+              }
+
+            },
+            error: function (err) {
+              console.log('err', JSON.stringify(err));
+            }
+          });
+        }
+
+        walkSourceTree('/');
+
+      });
+    </script>
+  </body>
+</html>  
